@@ -2,7 +2,7 @@ const { v4: uuidv4 } = require("uuid");
 const { readFileSync, writeFileSync } = require("fs");
 const { MongoClient } = require('mongodb');
 
-const DATABASE_URL = 'mongodb+srv://Akash:chaurasiya@cluster0.izqpfng.mongodb.net/?retryWrites=true&w=majority'; 
+const DATABASE_URL = 'mongodb+srv://Akash:aCCcZp2cZ4QDstOh@cluster0.izqpfng.mongodb.net/?retryWrites=true&w=majority'; 
 const DATABASE_NAME = 'Forms'; 
 const COLLECTION_NAME = 'forms';
 
