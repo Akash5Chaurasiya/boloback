@@ -80,8 +80,9 @@ const saveResponse = async (responseJson) => {
     }
 };
 const getTotalResponseCount = async () => {
+    let client; 
     try {
-        const client = new MongoClient(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
+        client = new MongoClient(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
         await client.connect();
         const database = client.db(DATABASE_NAME);
         const collection = database.collection(COLLECTION_NAME);
@@ -101,11 +102,12 @@ const getTotalResponseCount = async () => {
     } catch (error) {
         console.error(error);
     } finally {
-        if (client.isConnected()) {
-            await client.close();
+        if (client) {
+            await client.close(); 
         }
     }
 };
+
 
 module.exports = {
     saveFormData,
