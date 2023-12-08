@@ -1,9 +1,9 @@
 const { v4: uuidv4 } = require("uuid");
 const { readFileSync, writeFileSync } = require("fs");
-const { MongoClient,ObjectId  } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 
-const DATABASE_URL = 'mongodb+srv://Akash:aCCcZp2cZ4QDstOh@cluster0.izqpfng.mongodb.net/?retryWrites=true&w=majority'; 
-const DATABASE_NAME = 'Forms'; 
+const DATABASE_URL = 'mongodb+srv://Akash:aCCcZp2cZ4QDstOh@cluster0.izqpfng.mongodb.net/?retryWrites=true&w=majority';
+const DATABASE_NAME = 'Forms';
 const COLLECTION_NAME = 'forms';
 
 const saveFormData = async (formJson) => {
@@ -55,6 +55,7 @@ const getFormById = async (id) => {
     }
 };
 
+
 const saveResponse = async (responseJson) => {
     try {
         const client = new MongoClient(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -65,20 +66,19 @@ const saveResponse = async (responseJson) => {
         const objectId = new ObjectId(id);
         const existingResponse = await collection.findOne({ _id: objectId });
         if (existingResponse) {
-            const len = existingResponse.responses.length;
             await collection.updateOne(
                 { _id: objectId },
-                { $set: { [`responses.${len}`]: response } }
+                { $push: { responses: response } }
             );
         } else {
             await collection.insertOne({ _id: objectId, responses: [response] });
         }
-        client.close(); // Close the database connection
     } catch (error) {
         console.error(error);
+    } finally {
+        await client.close();
     }
 };
-
 const getTotalResponseCount = async () => {
     try {
         const client = new MongoClient(DATABASE_URL, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -93,8 +93,6 @@ const getTotalResponseCount = async () => {
                 }
             }
         ]).toArray();
-        client.close(); // Close the database connection
-        // Format the result as an object with form IDs and their response counts
         const responseCount = responseCounts.reduce((acc, curr) => {
             acc[curr._id.toString()] = curr.count;
             return acc;
@@ -102,12 +100,17 @@ const getTotalResponseCount = async () => {
         return responseCount;
     } catch (error) {
         console.error(error);
+    } finally {
+        if (client.isConnected()) {
+            await client.close();
+        }
     }
 };
+
 module.exports = {
-	saveFormData,
-	getAllForms,
-	getFormById,
-	saveResponse,
-	getTotalResponseCount,
+    saveFormData,
+    getAllForms,
+    getFormById,
+    saveResponse,
+    getTotalResponseCount,
 };
