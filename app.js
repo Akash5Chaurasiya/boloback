@@ -4,13 +4,12 @@ const variables = require("./config/variables.js");
 const cors = require("cors");
 
 let app = express();
-app.use(
-	cors({
-		credentials: true,
-		methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-		origin: true,
-	})
-);
+app.use(cors({
+	credentials: true,
+	methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+	origin: 'https://bolo-front-akashs-projects-db31b022.vercel.app',
+}));
+
 app.use((req, res, next) => {
 	res.setHeader("Access-Control-Allow-Origin", "*");
 	next();
